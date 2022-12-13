@@ -432,8 +432,16 @@ int main() {
 
     testCroutSequencial(A,n);
 
+    cout << "Unesite broj threadova: ";
+    int thr;
+    cin >> thr;
+
+    omp_lock_t lock;
+
+    omp_init_lock(&lock);
+
     omp_set_dynamic(0);
-    omp_set_num_threads(32);
+    omp_set_num_threads(thr);
     //initialize a simple lock for parallel region
 
     testCroutParallel1(A, n);
