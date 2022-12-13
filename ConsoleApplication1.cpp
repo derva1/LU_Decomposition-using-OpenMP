@@ -25,6 +25,7 @@ public:
         return std::chrono::duration_cast<second_>(clock_::now() - beg_).count();
     }
 };
+
 void crout_0(double** A, double** L, double** U, int n) {
     int i, j, k;
     double sum = 0;
@@ -51,6 +52,7 @@ void crout_0(double** A, double** L, double** U, int n) {
         }
     }
 }
+
 void crout_1(double** A, double** L, double** U, int n) {
     int i, j, k;
     double sum = 0;
@@ -147,6 +149,7 @@ void crout_2(double** A, double** L, double** U, int n) {
     }
 
 }
+
 void crout_3(double** A, double** L, double** U, int n) {
     int i, j, k;
     double sum = 0;
@@ -299,7 +302,7 @@ void testCroutParallel1(double** A, size_t n) {
     }
 
     {
-        Timer t("PALRALLEL 1: ");
+        Timer t("PARALLEL 1: ");
         crout_1(A, L, U, n);
     }
 
@@ -331,7 +334,7 @@ void testCroutParallel2(double** A, size_t n) {
     }
 
     {
-        Timer t("PALRALLEL 2: ");
+        Timer t("PARALLEL 2: ");
         crout_2(A, L, U, n);
     }
 
@@ -363,7 +366,7 @@ void testCroutParallel3(double** A, size_t n) {
     }
 
     {
-        Timer t("PALRALLEL 3: ");
+        Timer t("PARALLEL 3: ");
         crout_3(A, L, U, n);
     }
 
@@ -395,7 +398,7 @@ void testCroutParallel4(double** A, size_t n) {
     }
 
     {
-        Timer t("PALRALLEL 4: ");
+        Timer t("PARALLEL 4: ");
         crout_4(A, L, U, n);
     }
 
@@ -408,6 +411,7 @@ void testCroutParallel4(double** A, size_t n) {
     free(U);
 }
 
+
 int main() {
     cout << "Unesite velicinu niza: ";
     int n;
@@ -418,6 +422,8 @@ int main() {
         A[i] = (double*)malloc(sizeof(double) * n);
     }
 
+    srand(time(0));
+
     for (size_t i = 0; i < n; i++) {
         for (size_t j = 0; j < n; j++) {
             A[i][j] = rand() % 100;
@@ -427,15 +433,12 @@ int main() {
     testCroutSequencial(A,n);
 
     omp_set_dynamic(0);
-    omp_set_num_threads(80);
+    omp_set_num_threads(32);
     //initialize a simple lock for parallel region
-    omp_lock_t lock;
-
-    omp_init_lock(&lock);
 
     testCroutParallel1(A, n);
     testCroutParallel2(A, n);
-    testCroutParallel3(A, n);
+    //testCroutParallel3(A, n);
     testCroutParallel4(A, n);
 
     for (size_t i = 0; i < n; i++) {
